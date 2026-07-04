@@ -6,10 +6,11 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 )
 
 func TestConcurrentBooking_ExactlyOneWins(t *testing.T) {
-	store := NewConcurrentStore()
+	store := NewRedisStore(redis.NewClient())
 	svc := NewService(store)
 
 	const numGoroutines = 100_000 // 100k users trying to book a seat at the same time

@@ -54,7 +54,17 @@ func (s *RedisStore) hold(b Booking) (Booking, error) {
 	b.ID = id
 	val, _ := json.Marshal(b)
 
-	s.rdb.SetArgs(ctx, key, val, redis.SetArgs{})
+	res := s.rdb.SetArgs(ctx, key, val, redis.SetArgs{
+		Mode: "NX", // Set if not exists
+		TTL:  defaultHoldTTL,
+	})
+
+	ok := res.Val() == "OK"
+	if !ok {
+		return Booking{}, ErrSeatAlreadyBooked
+	}
+
+	s.rdb.Set(ctx, sessionKey(id), key, defaultHoldTTL)
 
 	return Booking{
 		ID:        id,
