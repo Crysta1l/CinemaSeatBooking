@@ -31,14 +31,14 @@ func sessionKey(id string) string {
 	return fmt.Sprintf("session:%s", id)
 }
 
-func (s *RedisStore) Book(b Booking) error {
+func (s *RedisStore) Book(b Booking) (Booking, error) {
 	session, err := s.hold(b)
 	if err != nil {
-		return err
+		return Booking{}, err
 	}
 
 	fmt.Printf("Session booked %v", session)
-	return nil
+	return session, nil
 }
 
 func (s *RedisStore) ListBookings(movieID string) []Booking {
