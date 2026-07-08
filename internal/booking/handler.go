@@ -120,3 +120,27 @@ type sessionResponse struct {
 	Status    string `json:"status"`
 	ExpiresAt string `json:"expires_at"`
 }
+
+func (h *handler) ReleaseSession(w http.ResponseWriter, r *http.Request) {
+	sessionID := r.PathValue("sessionID")
+
+	var req holdSeatRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Println(err)
+		return
+	}
+
+	if req.UserID == "" {
+		return
+	}
+
+	err := h.svc.ReleaseSeat(r.Context(), sessionID, req.UserID)
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}

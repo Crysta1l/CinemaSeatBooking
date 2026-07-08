@@ -25,7 +25,7 @@ func main() {
 	mux.HandleFunc("POST /movies/{MovieID}/seats/{seatID}/hold", bookingHandler.HoldSeat)
 
 	mux.HandleFunc("PUT /sessions/{sessionID}/confirm", bookingHandler.ConfirmSession)
-	mux.HandleFunc("DELETE /sessions{sessionID}", bookingHandler.ReleaseSession)
+	mux.HandleFunc("DELETE /sessions/{sessionID}", bookingHandler.ReleaseSession)
 
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Panic(err)
